@@ -1,0 +1,320 @@
+<title>ScanForma для Windows</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Розкладка: широкий герой з живим демо (скан → анкета), далі три кроки, можливості, два режими, завантаження. */
+:root{
+  --bg:#F6F7F8; --surface:#FFFFFF; --soft:#EEF0F2; --line:#DDE1E5; --line2:#C9CED4;
+  --ink:#101418; --ink2:#4A535C; --ink3:#6B747D;
+  --ok:#15803D; --okbg:#E3F3E8; --okline:#8FCBA3;
+  --warn:#8A4A00; --warnbg:#FFF2D6; --warnline:#E9BC64;
+  --beam:#22A05B;
+  --glass:linear-gradient(180deg,#FFFFFF 0%,#F8F9FA 46%,#E9ECEF 54%,#F2F4F6 100%);
+  --shadow:0 1px 2px rgba(16,20,24,.06),0 18px 40px rgba(16,20,24,.08);
+  --f-display:"Unbounded","Segoe UI",system-ui,sans-serif;
+  --f-body:"Onest","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",Consolas,ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1215; --surface:#171B20; --soft:#1E2329; --line:#2A3038; --line2:#39414B;
+  --ink:#EEF1F4; --ink2:#B3BBC4; --ink3:#8F98A2;
+  --ok:#5FD08A; --okbg:#173325; --okline:#2F6E47;
+  --warn:#F2C374; --warnbg:#33270F; --warnline:#7A5A1C;
+  --beam:#4ADE80;
+  --glass:linear-gradient(180deg,#2A3038 0%,#232930 46%,#1C2127 54%,#20262C 100%);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.35);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1215; --surface:#171B20; --soft:#1E2329; --line:#2A3038; --line2:#39414B;
+  --ink:#EEF1F4; --ink2:#B3BBC4; --ink3:#8F98A2;
+  --ok:#5FD08A; --okbg:#173325; --okline:#2F6E47;
+  --warn:#F2C374; --warnbg:#33270F; --warnline:#7A5A1C;
+  --beam:#4ADE80;
+  --glass:linear-gradient(180deg,#2A3038 0%,#232930 46%,#1C2127 54%,#20262C 100%);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.35);
+  color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:8px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+
+/* шапка */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.bar .wrap{display:flex;align-items:center;gap:16px;min-height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}
+.mark{width:34px;height:34px;border-radius:10px;background:var(--glass);border:1px solid var(--line2);display:grid;place-items:center}
+.mark svg{width:20px;height:20px}
+.bar nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.bar nav a{padding:8px 12px;border-radius:999px;text-decoration:none;color:var(--ink2);font-weight:500}
+.bar nav a:hover{background:var(--soft);color:var(--ink)}
+
+/* кнопки */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 22px;border-radius:999px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);font:600 15.5px var(--f-body);text-decoration:none;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.btn.pri{background:var(--ink);color:var(--bg);border-color:var(--ink);min-height:54px;padding:0 28px;font-size:16.5px}
+.btn svg{width:20px;height:20px}
+
+/* герой */
+.hero{padding-block:56px 40px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center}
+.hero h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5.2vw,60px);line-height:1.05;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:var(--ok)}
+.lead{margin-top:20px;font-size:18.5px;color:var(--ink2);max-width:34em}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;align-items:center}
+.meta{margin-top:14px;color:var(--ink3);font-size:14px}
+
+/* демо: скан паспорта → анкета */
+.demo{position:relative;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);gap:18px;align-items:center}
+.pass{position:relative;aspect-ratio:1.42;max-width:100%;border-radius:16px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:16px;display:grid;grid-template-columns:34% 1fr;gap:12px;overflow:hidden}
+.photo{border-radius:10px;background:var(--soft);display:grid;place-items:end center;overflow:hidden}
+.photo svg{width:80%;height:auto;color:var(--line2)}
+.plines{display:flex;flex-direction:column;gap:8px;padding-top:6px}
+.plines i{display:block;height:8px;border-radius:4px;background:var(--soft)}
+.plines i:nth-child(1){width:70%;background:var(--line)}
+.plines i:nth-child(2){width:90%}.plines i:nth-child(3){width:55%}.plines i:nth-child(4){width:80%}
+.mrz{grid-column:1/-1;align-self:end;font:500 9.5px/1.5 var(--f-mono);color:var(--ink3);letter-spacing:.06em;white-space:nowrap;overflow:hidden}
+.corners{position:absolute;inset:-10px;pointer-events:none}
+.corners b{position:absolute;width:26px;height:26px;border:3px solid var(--ink);opacity:.7}
+.corners b:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-radius:8px 0 0 0}
+.corners b:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-radius:0 8px 0 0}
+.corners b:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 8px}
+.corners b:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-radius:0 0 8px 0}
+.beam{position:absolute;left:0;right:0;top:50%;height:3px;border-radius:2px;background:var(--beam);box-shadow:0 0 18px 4px color-mix(in srgb,var(--beam) 55%,transparent);opacity:0}
+.run .beam{animation:beam 1.6s ease-in-out 1}
+@keyframes beam{0%{top:4%;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:96%;opacity:0}}
+
+.form{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.form h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.form h3 .tag{margin-left:auto}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:var(--ink2)}
+.fld label span{color:var(--ok);font-weight:600;transition:opacity .3s}
+.box{min-height:36px;display:flex;align-items:center;padding:0 12px;border-radius:9px;border:1px solid var(--okline);background:color-mix(in srgb,var(--okbg) 45%,var(--surface));font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;transition:border-color .35s,background-color .35s}
+.box.wait{border:1.5px dashed var(--line2);background:var(--surface)}
+.box.wait + * {}
+.fld.wait label span{opacity:0}
+.caret{display:inline-block;width:2px;height:1.05em;background:var(--ink);margin-left:2px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--okbg);color:var(--ok);white-space:nowrap}
+.tag.warn{background:var(--warnbg);color:var(--warn)}
+.sf{align-self:flex-end;font:500 11px var(--f-mono);color:var(--ink3);letter-spacing:.04em}
+
+/* секції */
+section.block{padding-block:72px}
+.sec-head{display:flex;flex-direction:column;gap:10px;max-width:640px;margin-bottom:36px}
+.sec-head h2{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.4vw,38px);line-height:1.12;letter-spacing:-.015em}
+.sec-head p{color:var(--ink2);font-size:17px}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;counter-reset:s}
+.step{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:10px}
+.step .n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--ink);color:var(--bg)}
+.step h3{font-size:19px}
+.step p{color:var(--ink2)}
+
+.feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.feat{background:var(--surface);padding:26px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.feat svg{width:28px;height:28px;color:var(--ink);margin-bottom:6px}
+.feat h3{font-size:17.5px}
+.feat p{color:var(--ink2);font-size:15px}
+.feat .mono{font-size:13px;color:var(--ink3)}
+
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.mode{border-radius:20px;padding:28px;border:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;gap:12px}
+.mode.dark{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.mode.dark p,.mode.dark li{color:color-mix(in srgb,var(--bg) 78%,var(--ink))}
+.mode h3{font-size:22px;font-family:var(--f-display);font-weight:500}
+.mode ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink2)}
+
+.dl{border-radius:28px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);padding:clamp(24px,5vw,56px);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:36px;align-items:center}
+.dl h2{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,3.6vw,42px);line-height:1.1}
+.dl ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;color:var(--ink2)}
+.dl ol b{color:var(--ink)}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14.5px;margin-top:18px}
+.spec dt{color:var(--ink3)}.spec dd{margin:0;font-weight:600}
+
+footer{padding-block:40px 56px;color:var(--ink3);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;border-top:1px solid var(--line);padding-top:24px}
+
+@media (max-width:900px){
+  .hero .wrap,.dl{grid-template-columns:1fr}
+  .steps,.feats{grid-template-columns:1fr 1fr}
+}
+@media (max-width:620px){
+  .demo{grid-template-columns:1fr}
+  .steps,.feats,.modes{grid-template-columns:1fr}
+  .bar nav{display:none}
+  section.block{padding-block:52px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#top"><span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 9h10M7 13h10M7 17h6"/></svg></span>ScanForma</a>
+    <nav aria-label="Розділи">
+      <a href="#how">Як працює</a><a href="#features">Можливості</a><a href="#modes">Режими</a><a href="#download">Скачати</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Кадри · документи · друк</p>
+        <h1>Скан документів, і анкета <em>вже заповнена</em></h1>
+        <p class="lead">ScanForma читає паспорт, карту побиту й довідку студента, сама заповнює дані особи і друкує готові бланки Word.</p>
+        <div class="cta">
+          <a class="btn pri" id="dl-hero" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Скачати для Windows</a>
+          <a class="btn" href="#how">Як це працює</a>
+        </div>
+        <p class="meta">Безкоштовно · Windows 10 і 11 · версія <span class="mono">0.3.11</span></p>
+      </div>
+
+      <div class="demo" id="demo" aria-label="Приклад: програма сканує документ і заповнює анкету">
+        <div class="pass" aria-hidden="true">
+          <div class="photo"><svg viewBox="0 0 40 40" fill="currentColor"><circle cx="20" cy="15" r="8"/><path d="M4 40c2-11 30-11 32 0z"/></svg></div>
+          <div class="plines"><i></i><i></i><i></i><i></i></div>
+          <div class="mrz">P&lt;UKRKOVALENKO&lt;&lt;OLENA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>FX1234567UKR9003154F3108206&lt;&lt;&lt;&lt;</div>
+          <div class="beam"></div>
+          <div class="corners"><b></b><b></b><b></b><b></b></div>
+        </div>
+        <div class="form">
+          <h3>Анкета особи <span class="tag" id="demo-tag">✓ з документів</span></h3>
+          <div class="fld"><label>Прізвище <span>✓ документ</span></label><div class="box" data-v="KOVALENKO">KOVALENKO</div></div>
+          <div class="fld"><label>Ім’я <span>✓ документ</span></label><div class="box" data-v="OLENA">OLENA</div></div>
+          <div class="fld"><label>Дата народження <span>✓ документ</span></label><div class="box mono" data-v="15.03.1990">15.03.1990</div></div>
+          <div class="fld"><label>Номер паспорта <span>✓ документ</span></label><div class="box mono" data-v="FX1234567">FX1234567</div></div>
+          <span class="sf">SF 5684794377-11</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Як працює</p>
+        <h2>Три кроки від скану до підписаних документів</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="n">1</span><h3>Додайте документи</h3><p>Скан зі сканера, фото з телефону або PDF. Програма бачить нові файли в папці сама.</p></div>
+        <div class="step"><span class="n">2</span><h3>Звірте й допишіть</h3><p>Зелені поля заповнено з документа, жовті треба звірити, порожні лишається дописати. Видно, скільки ще лишилось.</p></div>
+        <div class="step"><span class="n">3</span><h3>Прийміть і надрукуйте</h3><p>Анкета зберігається, бланки Word заповнюються самі. Виберіть потрібні й друкуйте одним натисканням.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="features" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Можливості</p>
+        <h2>Усе, що потрібно кадровику, в одному вікні</h2>
+      </div>
+      <div class="feats">
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v16H3zM9 8a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5M5.5 17a3.5 3.5 0 0 1 7 0M15 9h3M15 13h3"/></svg><h3>Розпізнавання документів</h3><p>Паспорт, карта побиту, довідка студента. Дані з машинного рядка перевіряються контрольними цифрами.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7zM14 2v4a2 2 0 0 0 2 2h4M16 13H8M16 17H8M10 9H8"/></svg><h3>Бланки Word самі заповнюються</h3><p>Свої шаблони договорів і заяв. Кожна сторінка отримує код, за яким підписаний скан сам знаходить потрібну особу.</p><p class="mono">SF 5684794377-11</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg><h3>Сканер і принтер усередині</h3><p>Сканування й друк без інших програм: вибір апарата, двосторонній друк, перегляд сторінок перед друком.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 0 0 8a4 4 0 1 0 0-8M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><h3>Працівники по містах</h3><p>Kraków, Łódź, Warszawa та інші. Статус документів видно в списку: готово, перевірити, бракує даних.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5zM6 12v5c3 3 9 3 12 0v-5"/></svg><h3>Строки довідок студентів</h3><p>Позначка ST сама змінює колір: діє, менше двох місяців, останній місяць, строк минув.</p></div>
+        <div class="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg><h3>Дані під захистом</h3><p>Скани зашифровані. Увійти можуть лише люди, яких додав власник фірми, а журнал змін показує, хто що змінив.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="modes" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Два режими</p>
+        <h2>Один комп’ютер чи ціла фірма</h2>
+      </div>
+      <div class="modes">
+        <div class="mode">
+          <h3>Лише цей комп’ютер</h3>
+          <p>Встановили й працюєте. Без сервера, без входу, без інтернету.</p>
+          <ul><li>Підходить для одного кабінету</li><li>Дані й скани лишаються на цьому ПК</li><li>Резервна копія одним файлом</li></ul>
+        </div>
+        <div class="mode dark">
+          <h3>Сервер фірми</h3>
+          <p>Спільний список для кількох міст і кількох кадровиків.</p>
+          <ul><li>Власник реєструється один раз</li><li>Кадровиків додає за email і паролем</li><li>Зміни синхронізуються між комп’ютерами</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="download" style="padding-top:0">
+    <div class="wrap">
+      <div class="dl">
+        <div>
+          <p class="eyebrow">Скачати</p>
+          <h2>ScanForma для Windows</h2>
+          <dl class="spec">
+            <dt>Версія</dt><dd class="mono">0.3.11</dd>
+            <dt>Система</dt><dd>Windows 10 або 11, 64-біт</dd>
+            <dt>Розмір</dt><dd>≈ 105 МБ</dd>
+            <dt>Ціна</dt><dd>Безкоштовно</dd>
+          </dl>
+          <div class="cta"><a class="btn pri" id="dl-main" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>Скачати інсталятор</a></div>
+        </div>
+        <ol>
+          <li><b>Скачайте</b> файл <span class="mono">ScanForma_Setup_0.3.11.exe</span>.</li>
+          <li><b>Запустіть</b> його. Інсталятор без цифрового підпису, тому Windows може попросити підтвердження.</li>
+          <li><b>Відкрийте</b> ScanForma з меню «Пуск» і виберіть: лише цей комп’ютер чи сервер фірми.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>ScanForma · програма для кадрових відділів</span>
+  </div>
+</footer>
+
+<script>
+// Посилання на інсталятор: одне місце для обох кнопок.
+const DOWNLOAD_URL = "";
+if (DOWNLOAD_URL) for (const id of ["dl-hero", "dl-main"]) {
+  const a = document.getElementById(id); a.href = DOWNLOAD_URL; a.target = "_blank"; a.rel = "noopener";
+}
+
+// Демо: у спокої анкета вже заповнена; коли блок видно — сканування і заповнення поле за полем, по колу.
+(function () {
+  const demo = document.getElementById("demo");
+  if (!demo || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const fields = [...demo.querySelectorAll(".fld")];
+  const tag = document.getElementById("demo-tag");
+  let busy = false, visible = false;
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function play() {
+    if (busy || !visible) return;
+    busy = true;
+    for (const f of fields) { f.classList.add("wait"); f.querySelector(".box").classList.add("wait"); f.querySelector(".box").textContent = ""; }
+    tag.className = "tag warn"; tag.textContent = "Сканую…";
+    demo.classList.remove("run"); void demo.offsetWidth; demo.classList.add("run");
+    await wait(1500);
+    for (const f of fields) {
+      const box = f.querySelector(".box"), v = box.dataset.v;
+      box.classList.remove("wait");
+      for (let i = 1; i <= v.length; i++) { box.innerHTML = v.slice(0, i) + '<span class="caret"></span>'; await wait(45); }
+      box.textContent = v; f.classList.remove("wait");
+      await wait(160);
+    }
+    tag.className = "tag"; tag.textContent = "✓ з документів";
+    busy = false;
+    setTimeout(play, 3200);
+  }
+  new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) setTimeout(play, 600); }, { threshold: .4 }).observe(demo);
+})();
+</script>
