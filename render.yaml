@@ -1,14 +1,10 @@
-# Статичний сайт ScanForma на Render (безкоштовний тариф).
-# index.html написаний без <!doctype>/<head> (так його публікує claude.ai), тому збирання загортає його в повний HTML.
+# Статичний сайт ScanForma на Render (безкоштовний тариф). index.html уже повний документ, збирати нічого.
 services:
   - type: web
     runtime: static
     name: scanforma-site
-    buildCommand: >-
-      mkdir -p dist &&
-      { printf '<!doctype html><html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style></head><body>';
-      cat index.html; printf '</body></html>'; } > dist/index.html
-    staticPublishPath: dist
+    buildCommand: ""
+    staticPublishPath: .
     headers:
       - path: /*
         name: X-Frame-Options
