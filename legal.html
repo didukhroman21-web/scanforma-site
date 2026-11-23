@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="uk">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Умови і конфіденційність · ScanForma</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{--bg:#F6F7F8;--surface:#FFFFFF;--ink:#14171A;--muted:#5B6470;--line:#DDE1E5;--ok:#15803D}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1215;--surface:#171B20;--ink:#EEF1F4;--muted:#9AA3AD;--line:#2A3038;--ok:#5FD08A}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Onest,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:32px 16px 64px}
+a{color:var(--ok)}
+.back{display:inline-block;margin-bottom:24px;font-weight:600;text-decoration:none}
+h1{font-family:Unbounded,system-ui,sans-serif;font-size:clamp(24px,5vw,34px);line-height:1.2;margin:0 0 8px}
+h2{font-size:18px;margin:32px 0 8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:8px 24px 20px;margin-top:24px}
+p,li{margin:6px 0;overflow-wrap:anywhere}
+.muted{color:var(--muted)}
+ul{padding-left:20px}
+</style>
+<div class="wrap">
+  <a class="back" href="./">← ScanForma</a>
+  <h1>Умови і конфіденційність</h1>
+  <p class="muted" id="ed">Завантаження…</p>
+  <nav><a href="#terms">Умови використання</a> · <a href="#site">Цей сайт</a> · <a href="THIRD-PARTY-NOTICES.txt">Ліцензії компонентів</a></nav>
+
+  <div class="card" id="terms"><p class="muted">Текст умов: <a href="TERMS.txt">TERMS.txt</a></p></div>
+
+  <div class="card" id="site">
+    <h2>Цей сайт</h2>
+    <p>Сайт не використовує cookies, аналітику, рекламу чи форми і не просить жодних даних. Шрифти зберігаються на самому сайті, без звернень до Google чи інших сервісів.</p>
+    <p>Сайт розміщено на GitHub Pages і Render, а інсталятор скачується з GitHub Releases. Як і будь-який хостинг, ці сервіси ведуть технічні журнали (IP-адреса, час, браузер) для роботи й захисту. Ними керують самі сервіси за своїми правилами:
+      <a href="https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement">GitHub</a>,
+      <a href="https://render.com/privacy">Render</a>.</p>
+    <p>Шрифти Unbounded, Onest і JetBrains Mono поширюються за ліцензією SIL Open Font License 1.1.</p>
+  </div>
+
+  <div class="card">
+    <h2>Ліцензії сторонніх компонентів</h2>
+    <p>Перелік компонентів у програмі, їхні ліцензії і де взяти вихідні коди: <a href="THIRD-PARTY-NOTICES.txt">THIRD-PARTY-NOTICES.txt</a>. Той самий файл лежить у папці встановленої програми.</p>
+  </div>
+</div>
+<script>
+// Умови — один файл TERMS.txt (його ж показує інсталятор); тут він перетворюється на розмітку.
+fetch("TERMS.txt").then(r => r.ok ? r.text() : Promise.reject()).then(t => {
+  const box = document.getElementById("terms"), lines = t.replace(/^﻿/, "").split(/\r?\n/);
+  document.getElementById("ed").textContent = lines[1] || "";
+  box.textContent = "";
+  let list = null;
+  const link = s => s.replace(/https:\/\/\S+/g, u => `<a href="${u}">${u}</a>`);
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  for (const raw of lines.slice(2)) {
+    const s = raw.trim();
+    if (!s) { list = null; continue; }
+    let el;
+    if (/^\d+\.\s+[А-ЯІЇЄҐA-Z',' ]+$/.test(s)) { el = document.createElement("h2"); list = null; }
+    else if (s.startsWith("- ")) { if (!list) box.append(list = document.createElement("ul")); el = document.createElement("li"); list.append(el); el.innerHTML = link(esc(s.slice(2))); continue; }
+    else { el = document.createElement("p"); list = null; }
+    el.innerHTML = link(esc(s));
+    box.append(el);
+  }
+}).catch(() => {});
+</script>
