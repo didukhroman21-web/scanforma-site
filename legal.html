@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="uk">
-<meta charset="utf-8">
+<meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Умови і конфіденційність · ScanForma</title>
 <link rel="stylesheet" href="fonts/fonts.css">
@@ -41,24 +41,4 @@ ul{padding-left:20px}
     <p>Перелік компонентів у програмі, їхні ліцензії і де взяти вихідні коди: <a href="THIRD-PARTY-NOTICES.txt">THIRD-PARTY-NOTICES.txt</a>. Той самий файл лежить у папці встановленої програми.</p>
   </div>
 </div>
-<script>
-// Умови — один файл TERMS.txt (його ж показує інсталятор); тут він перетворюється на розмітку.
-fetch("TERMS.txt").then(r => r.ok ? r.text() : Promise.reject()).then(t => {
-  const box = document.getElementById("terms"), lines = t.replace(/^﻿/, "").split(/\r?\n/);
-  document.getElementById("ed").textContent = lines[1] || "";
-  box.textContent = "";
-  let list = null;
-  const link = s => s.replace(/https:\/\/\S+/g, u => `<a href="${u}">${u}</a>`);
-  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-  for (const raw of lines.slice(2)) {
-    const s = raw.trim();
-    if (!s) { list = null; continue; }
-    let el;
-    if (/^\d+\.\s+[А-ЯІЇЄҐA-Z',' ]+$/.test(s)) { el = document.createElement("h2"); list = null; }
-    else if (s.startsWith("- ")) { if (!list) box.append(list = document.createElement("ul")); el = document.createElement("li"); list.append(el); el.innerHTML = link(esc(s.slice(2))); continue; }
-    else { el = document.createElement("p"); list = null; }
-    el.innerHTML = link(esc(s));
-    box.append(el);
-  }
-}).catch(() => {});
-</script>
+<script src="legal.js"></script>

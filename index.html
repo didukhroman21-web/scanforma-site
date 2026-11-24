@@ -1,4 +1,4 @@
-<!doctype html><html lang="uk"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style>
+<!doctype html><html lang="uk"><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="strict-origin-when-cross-origin"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}</style>
 <title>ScanForma для Windows</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="fonts/fonts.css">
@@ -137,6 +137,7 @@ section.block{padding-block:72px}
 .dl h2{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,3.6vw,42px);line-height:1.1}
 .dl ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;color:var(--ink2)}
 .dl ol b{color:var(--ink)}
+.dl .sum{margin:14px 0 0;font-size:13px;color:var(--ink3);overflow-wrap:anywhere}
 .spec{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;font-size:14.5px;margin-top:18px}
 .spec dt{color:var(--ink3)}.spec dd{margin:0;font-weight:600}
 
@@ -270,6 +271,8 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-bet
           <li><b>Запустіть</b> його. Інсталятор без цифрового підпису, тому Windows може показати синє вікно: натисніть «Докладніше», потім «Усе одно запустити». Під час установки програма покаже <a href="legal.html">умови використання</a>.</li>
           <li><b>Відкрийте</b> ScanForma з меню «Пуск» і виберіть: лише цей комп’ютер чи сервер фірми.</li>
         </ol>
+        <p class="sum">Перевірка, що файл справжній (SHA-256), у PowerShell: <span class="mono">Get-FileHash ScanForma_Setup_0.3.11.exe</span><br>
+          <span class="mono">186A0F8721F362501CE019223EC6D976F6FBB2D91B97070BB7AD81DF1E2C860C</span></p>
       </div>
     </div>
   </section>
@@ -282,39 +285,4 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-bet
   </div>
 </footer>
 
-<script>
-// Посилання на інсталятор: одне місце для обох кнопок.
-const DOWNLOAD_URL = "https://github.com/didukhroman21-web/scanforma-site/releases/download/v0.3.11/ScanForma_Setup_0.3.11.exe";
-if (DOWNLOAD_URL) for (const id of ["dl-hero", "dl-main"]) {
-  const a = document.getElementById(id); a.href = DOWNLOAD_URL; a.target = "_blank"; a.rel = "noopener";
-}
-
-// Демо: у спокої анкета вже заповнена; коли блок видно — сканування і заповнення поле за полем, по колу.
-(function () {
-  const demo = document.getElementById("demo");
-  if (!demo || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const fields = [...demo.querySelectorAll(".fld")];
-  const tag = document.getElementById("demo-tag");
-  let busy = false, visible = false;
-  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  async function play() {
-    if (busy || !visible) return;
-    busy = true;
-    for (const f of fields) { f.classList.add("wait"); f.querySelector(".box").classList.add("wait"); f.querySelector(".box").textContent = ""; }
-    tag.className = "tag warn"; tag.textContent = "Сканую…";
-    demo.classList.remove("run"); void demo.offsetWidth; demo.classList.add("run");
-    await wait(1500);
-    for (const f of fields) {
-      const box = f.querySelector(".box"), v = box.dataset.v;
-      box.classList.remove("wait");
-      for (let i = 1; i <= v.length; i++) { box.innerHTML = v.slice(0, i) + '<span class="caret"></span>'; await wait(45); }
-      box.textContent = v; f.classList.remove("wait");
-      await wait(160);
-    }
-    tag.className = "tag"; tag.textContent = "✓ з документів";
-    busy = false;
-    setTimeout(play, 3200);
-  }
-  new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) setTimeout(play, 600); }, { threshold: .4 }).observe(demo);
-})();
-</script>
+<script src="site.js"></script>
